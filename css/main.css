@@ -54,6 +54,8 @@ body {
   padding: 2.5rem;
   display: grid;
   gap: 1rem;
+  grid-template-rows: auto 1fr; 
+  grid-template-columns: auto 1fr;
   grid-template-areas:
     "name name"
     "avatar bio";
