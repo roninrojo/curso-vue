@@ -15,6 +15,9 @@
     <div id="app">
         <!-- Favorites -->
         <div class="favorites">
+            <div class="favorite" v-for="favorite in allFavorites">
+                <a href="#"><img :src="favorite.avatar_url" alt="" class="favorite__avatar"></a>
+            </div>
         </div>
 
         <!-- Content -->
@@ -29,7 +32,7 @@
 
             <!-- Result -->
             <div v-if="result" class="result">
-                <!-- Las propiedades computadas nos sirven para separar la logica del template -->
+                <!-- Las propiedades computadas nos sirven para separar la logica (cuando es compleja) del template y reutilizarla en otros sitios si es necesario -->
                 <a v-if="isFavorite" href="#" class="result__toggle-favorite" @click="removeFavorite">❌ Remove favorite</a>
                 <!-- para escuchar eventos usamos la directiva v-on o su abreviatura @ -->
                 <a v-else href="#" class="result__toggle-favorite" @click="addFavorite">Add favorite ⭐</a>
