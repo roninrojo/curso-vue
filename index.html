@@ -15,9 +15,11 @@
     <div id="app">
         <!-- Favorites -->
         <div class="favorites">
-            <div class="favorite" v-for="favorite in allFavorites">
-                <a href="#"><img :src="favorite.avatar_url" alt="" class="favorite__avatar"></a>
-            </div>
+            <transition-group name="list">
+                <div v:if="allFavorites" class="favorite" v-for="favorite in allFavorites" :key="favorite.id">
+                    <a @click.prevent="showFavorite(favorite)" href="#"><img :src="favorite.avatar_url" alt="" class="favorite__avatar"></a>
+                </div>
+            </transition-group> 
         </div>
 
         <!-- Content -->
@@ -31,22 +33,27 @@
             </form>
 
             <!-- Result -->
-            <div v-if="result" class="result">
-                <!-- Las propiedades computadas nos sirven para separar la logica (cuando es compleja) del template y reutilizarla en otros sitios si es necesario -->
-                <a v-if="isFavorite" href="#" class="result__toggle-favorite" @click="removeFavorite">❌ Remove favorite</a>
-                <!-- para escuchar eventos usamos la directiva v-on o su abreviatura @ -->
-                <a v-else href="#" class="result__toggle-favorite" @click="addFavorite">Add favorite ⭐</a>
-                <div class="result__name">{{ result.name }} alias {{result.login}}</div>
-                <!-- para atributos usamos la directiva v-bind o su abreviatura : , y no se usan las dobles llaves {{}}-->
-                <!-- dos ejemplos ⬇️ -->
-                <img class="result__avatar" v-bind:src="result.avatar_url" :alt="result.name">
-                <div class="result__bio">
-                    <p>{{ result.bio }}</p>
-                    <a class="result__blog" v-if="result.blog" :href="result.blog">{{result.blog}}</a>
+            <Transition>
+                <div v-if="result" class="result">
+                    <!-- Las propiedades computadas nos sirven para separar la logica (cuando es compleja) del template y reutilizarla en otros sitios si es necesario -->
+                    <a v-if="isFavorite" href="#" class="result__toggle-favorite" @click="removeFavorite">❌ Remove favorite</a>
+                    <!-- para escuchar eventos usamos la directiva v-on o su abreviatura @ -->
+                    <a v-else href="#" class="result__toggle-favorite" @click="addFavorite">Add favorite ⭐</a>
+                    <div class="result__name">{{ result.name }} alias {{result.login}}</div>
+                    <!-- para atributos usamos la directiva v-bind o su abreviatura : , y no se usan las dobles llaves {{}}-->
+                    <!-- dos ejemplos ⬇️ -->
+                    <img class="result__avatar" v-bind:src="result.avatar_url" :alt="result.name">
+                    <div class="result__bio">
+                        <p>{{ result.bio }}</p>
+                        <a class="result__blog" v-if="result.blog" :href="result.blog">{{result.blog}}</a>
+                    </div>
                 </div>
-            </div>
+            </Transition>
             <!-- Error -->
+            <Transition>
             <div v-if="error" class="result__error">{{ error }}</div>
+            </Transition>
+            
         </article>
     </div>
     <script src="js/main.js"></script>
