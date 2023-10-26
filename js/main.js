@@ -13,7 +13,9 @@ const app = Vue.createApp({
         }
     },
     created() {
+        // Cargamos los datos de local storage
         const savedFavorites = JSON.parse(localStorage.getItem('favorite'))
+        // Gracias al ?. si no existe es propiedad nos dara false sin petar, sino carga los favoritos de localstorage en nuestro mapa
         if (savedFavorites?.length) { // -> https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Operators/Optional_chaining
             const favorites = new Map(savedFavorites.map( item => [item.login, item]))
             this.favorites = favorites
@@ -29,16 +31,22 @@ const app = Vue.createApp({
     },
     methods: {
         async doSearch() {
+            // limpiamos resultados
             this.result = this.error = null;
 
+            // Buscamos la key de favorites (el nombre de usuario)
             const existSavedFavorite = this.favorites.get(this.search)
+            // Compromabos si existe convirtiendolo en booleano
             const requestFavorite = (() => {
                 if (!!existSavedFavorite) {
+                    // Si existe extremos el time y lo restamos para comprobar si ha pasado el tiempo máximo
                     const { time } = existSavedFavorite
                     const now = Date.now()
                     // console.log(`han pasado 5 segunddos? ${now} - ${time} = ${(now - time)} -> ${(now - time) > maxTime}`);
+                    // Si ha pasado el tiempo máximo devolvemos true y sigue hacia la petición
                     return (now - time) > maxTime
                 }
+                // Si no ha pasado el tiempo máximo salimos y no hacemos petición
                 return false
             })()
 
@@ -54,8 +62,9 @@ const app = Vue.createApp({
                 const resp = await fetch(API + this.search);
                 if(!resp.ok) throw new Error("Sin resultado")
                 const data = await resp.json();
-                
                 this.result = data;
+                // Como hemos hecho una búsqueda reseteamos el tiempo para la siquiente comparación
+                existSavedFavorite.time = Date.now()
             } catch (error) {
                 this.error = error;
                 this.result = false;
@@ -64,6 +73,7 @@ const app = Vue.createApp({
         },
         addFavorite() {
             this.result.time = Date.now();
+            // Añadimos un elemento al mapa con el nombre de usuario como key
             this.favorites.set(this.result.login, this.result);
             this.setLocalStorage();
         },
